@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* Reservation css start */
+.reserv h2{
+    font-family: "Poppins", sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #060709;
+    padding-bottom: 12px;
+    padding-top: 5px;
+    padding-left: 49px;
+}
+.reserv{
+    justify-content: center;
+}
+
+.mainReserv h4{
+    font-family: "Poppins", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #060709;
+    border-bottom: 1px solid #5D5CFF;
+    padding-bottom: 10px;
+}
+
+.mainReserv{
+    border: 1px solid #DFDFFF;
+    border-radius: 5px;
+    padding: 16px;
+    margin-right: 47px;
+}
+
+.mainReserv p{
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1B1B1B;
+    margin: 0;
+    margin-bottom: 8px;
+}
+.mainReserv input{
+    width: 100%;
+    margin-bottom: 14px;
+    border: 1px solid #DFDFFF;
+    border-radius: 5px;
+    outline: none;
+    padding: 6px;
+    font-size: 14px;
+    font-family: "Poppins", sans-serif;
+    color: #828290;
+}
+.mainReserv input:last-of-type {
+    margin-bottom: 0;
+}
+
+
+.charge h3{
+    font-family: "Poppins", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #060709;
+    border-bottom: 1px solid #5D5CFF;
+    padding-bottom: 10px;
+    padding-top: 18px;
+}
+
+/* =========charge css */
+.charges-table{
+    border: 1px solid #5D5CFF;
+    background: #DFDFFF;
+    width: 100%;
+    margin-top: 15px;
+}
+.tHead tr th{
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1B1B1B;
+    border-bottom: 1px solid #5D5CFF;
+    padding: 16px 0 18px 15px;
+}
+
+.tBody tr td{
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1B1B1B;
+    padding: 15px;
+}
+
+.tFoot tr td{
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1B1B1B;
+    padding-left: 15px;
+    padding-bottom: 13px;
+}
+
+.aditionalCharge h3{
+    font-family: "Poppins", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #060709;
+    border-bottom: 1px solid #5D5CFF;
+    padding-bottom: 10px;
+    padding-top: 18px;
+
+}
+.aditionalCharge label{
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000000;
+    padding-bottom: 22px;
+}
+.aditionalCharge{
+    border: 1px solid #D7D7FF;
+    border-radius: 5px;
+}
+
+.vType option{
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #828290;
+}
+
