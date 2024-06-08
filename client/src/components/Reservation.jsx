@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
-import { carListApiRequest } from '../../apiRequiest/apiRequiest';
-
+import { carListApiRequest, createInvoiceRequest } from '../../apiRequiest/apiRequiest';
+import { Link } from 'react-router-dom';
 const Reservation = () => {
     const [data, setData] = useState([]);
     const [pickupDate, setPickupDate] = useState('');
@@ -17,7 +17,7 @@ const Reservation = () => {
     const [hourRate, setHourRate] = useState(null);
     const [dayRate, setDayRate] = useState(null);
     const [weekRate, setWeekRate] = useState(null);
-    const monthRate = 200;
+    const monthRate = 2000;
 
     const rateFunction = (value,data)=>{
         if(value){
@@ -45,7 +45,7 @@ const Reservation = () => {
         const chargeAmounts = {
             collisionDamageWaiver: 9,
             liabilityInsurance: 15,
-            rentalTax: 11,
+            rentalTax: 11.5/100*grandTotal,
         };
         setAdditionalCharges((prev) => ({
             ...prev,
@@ -55,7 +55,7 @@ const Reservation = () => {
 
     const totalAdditionalCharges = Object.values(additionalCharges).reduce((a, b) => a + b, 0);
     const grandTotal = totalCharge + totalAdditionalCharges-discount;
-
+  
     // Set duration and calculate charge
     useEffect(() => {
         if (pickupDate && returnDate) {
@@ -88,16 +88,41 @@ const Reservation = () => {
             setDuration(calculatedDuration);
             setTotalCharge(calculatedCharge);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pickupDate, returnDate,hourRate, dayRate, weekRate]);
 
+
+    // creating Invoice api Request
+
+    const firstNameRef = useRef();
+    const lastNameRef = useRef();
+    const emailRef = useRef();
+    const phoneRef = useRef();
+    const addressRef = useRef();
+    const typeRef = useRef()
+    const onInvoiceHanlder = async()=>{
+        const collisionDamageWaiver= additionalCharges.collisionDamageWaiver.toFixed(2);
+       const liabilityInsurance =  additionalCharges.liabilityInsurance.toFixed(2)
+       const rentalTax = additionalCharges.rentalTax.toFixed(2);
+       const charge = totalCharge.toFixed(2);
+        const firstName = firstNameRef.current.value;
+        const lastName = lastNameRef.current.value;
+        const email = emailRef.current.value;
+        const phone = phoneRef.current.value;
+        const address = addressRef.current.value;
+        const Vehicle = selectRef.current.value;
+        const VehicleType = typeRef.current.value;
+        let res = await createInvoiceRequest(firstName,lastName,email, phone, address,pickupDate,returnDate,duration,discount,VehicleType,Vehicle,collisionDamageWaiver,liabilityInsurance,rentalTax,charge,grandTotal);
+    }
 
     return (
         <div>
             <div className="container">
                 <div className="row reserv p-0">
+                    <div className="col-12 btn d-flex" style={{justifyContent: "space-between", alignItems: "center"}}>
                     <h2>Reservation</h2>
-                    
+                  <Link to={"/invoice"}><button onClick={onInvoiceHanlder}>Print / Download</button></Link>
+                    </div>
+
                     <div className="col-lg-3 mainReserv">
                         <h4>Reservation Details</h4>
                         <p>Reservation ID</p>
@@ -133,17 +158,17 @@ const Reservation = () => {
                     <div className="col-lg-3 mainReserv">
                         <h4>Customer Information</h4>
                         <p>First Name <span style={{color:"red"}}>*</span></p>
-                        <input type="text" />
+                        <input ref={firstNameRef} type="text" />
                         <p>Last Name <span style={{color:"red"}}>*</span></p>
-                        <input type="text" />
+                        <input ref={lastNameRef} type="text" />
                         <p>Email <span style={{color:"red"}}>*</span></p>
-                        <input type="text" />
+                        <input ref={emailRef} type="text" />
                         <p>Phone <span style={{color:"red"}}>*</span></p>
-                        <input type="text" />
+                        <input ref={phoneRef} type="text" />
                         <p>Address</p>
-                        <input type="text" />
+                        <input ref={addressRef} type="text" />
                     </div>
-                    <div className="col-lg-4 charge">
+                    <div className="col-lg-5 charge">
                         <h3>Charges Summary</h3>
                         <table className="charges-table">
                             <thead className='tHead'>
@@ -176,7 +201,7 @@ const Reservation = () => {
                                 <tr>
                                     <td>Rental Tax</td>
                                     <td></td>
-                                    <td>$11.00</td>
+                                    <td>11.5%</td>
                                     <td>${additionalCharges.rentalTax.toFixed(2)}</td>
                                 </tr>
                             </tbody>
@@ -189,11 +214,11 @@ const Reservation = () => {
                         </table>
                     </div>    
                 </div>
-                <div className="row pb-5" style={{paddingLeft:"3rem", paddingTop:"18px", width:"81%"}}>
+                <div className="row pb-5" style={{paddingTop:"18px", width:"81%"}}>
                     <div className="col-lg-4 mainReserv">
                         <h4>Vehicle Information</h4>
                         <p>Vehicle Type <span style={{color:"red"}}>*</span></p>
-                        <select style={{color:"#828290", fontSize:"14px", fontFamily:"Poppins sans-serif"}} className="form-control vType">
+                        <select ref={typeRef} style={{color:"#828290", fontSize:"14px", fontFamily:"Poppins sans-serif"}} className="form-control vType">
                             {
                                 data.length > 0 ? (
                                     data.map((item, i) => {
@@ -224,9 +249,9 @@ const Reservation = () => {
                     </div>
                     <div className="col-lg-4 aditionalCharge">
                         <h3>Additional Charges</h3>
-                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('collisionDamageWaiver', e.target.checked)} /> <label>Collision Damage Waiver <span>$9</span></label><br />
-                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('liabilityInsurance', e.target.checked)} /> <label>Liability Insurance <span>$15</span></label><br />
-                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('rentalTax', e.target.checked)} /> <label>Rental Tax <span>$11</span></label>
+                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('collisionDamageWaiver', e.target.checked)} /> <label>Collision Damage Waiver <span style={{paddingLeft:"39px"}}>$9</span></label><br />
+                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('liabilityInsurance', e.target.checked)} /> <label>Liability Insurance <span style={{paddingLeft:"85px"}}>$15</span></label><br />
+                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('rentalTax', e.target.checked)} /> <label>Rental Tax <span style={{paddingLeft:'131px'}}>11.5%</span></label>
                     </div>
                 </div>
             </div>
