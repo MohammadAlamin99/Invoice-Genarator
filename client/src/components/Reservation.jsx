@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { carListApiRequest } from '../../apiRequiest/apiRequiest';
 
 const Reservation = () => {
@@ -7,40 +7,45 @@ const Reservation = () => {
     const [returnDate, setReturnDate] = useState('');
     const [duration, setDuration] = useState('');
     const [totalCharge, setTotalCharge] = useState(0);
+    const selectRef = useRef(null);
     const [additionalCharges, setAdditionalCharges] = useState({
         collisionDamageWaiver: 0,
         liabilityInsurance: 0,
         rentalTax: 0,
     });
     const [discount, setDiscount] = useState(0);
-    // ===========
-    const[rate, setRate] = useState(null);
+    const [hourRate, setHourRate] = useState(null);
+    const [dayRate, setDayRate] = useState(null);
+    const [weekRate, setWeekRate] = useState(null);
+    const monthRate = 200;
 
-    const rateFunction = ()=>{
-
+    const rateFunction = (value,data)=>{
+        if(value){
+            data.map((v)=>{
+                if(v?.make == value){
+                    setHourRate(v?.rates["hourly"]);
+                    setDayRate(v?.rates["daily"]);
+                    setWeekRate(v?.rates["weekly"]);
+                }
+            })
+        }
     }
-
     
     // carList api 
     useEffect(() => {
         (async () => {
             let result = await carListApiRequest();
             setData(result);
+            rateFunction(selectRef.current.value,result);
         })();
     },[]);
-
-    // Rates
-    const hourRate = 5;
-    const dayRate = 10;
-    const weekRate = 50;
-    const monthRate = 200;
 
     // Handle additional charges
     const handleAdditionalCharges = (chargeType, isChecked) => {
         const chargeAmounts = {
-            collisionDamageWaiver: 33,
-            liabilityInsurance: 33,
-            rentalTax: 33,
+            collisionDamageWaiver: 9,
+            liabilityInsurance: 15,
+            rentalTax: 11,
         };
         setAdditionalCharges((prev) => ({
             ...prev,
@@ -65,7 +70,7 @@ const Reservation = () => {
 
             if (durationInDays >= 30) {
                 const durationInMonths = durationInDays / 30;
-                calculatedDuration = `${Math.floor(durationInMonths)} month(s)`;
+                calculatedDuration =` ${Math.floor(durationInMonths)} month(s)`;
                 calculatedCharge = Math.floor(durationInMonths) * monthRate;
             } else if (durationInDays >= 7) {
                 const durationInWeeks = durationInDays / 7;
@@ -83,7 +88,8 @@ const Reservation = () => {
             setDuration(calculatedDuration);
             setTotalCharge(calculatedCharge);
         }
-    }, [pickupDate, returnDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pickupDate, returnDate,hourRate, dayRate, weekRate]);
 
 
     return (
@@ -158,19 +164,19 @@ const Reservation = () => {
                                 <tr>
                                     <td>Collision Damage Waiver</td>
                                     <td></td>
-                                    <td>$33.00</td>
+                                    <td>$9.00</td>
                                     <td>${additionalCharges.collisionDamageWaiver.toFixed(2)}</td>
                                 </tr>
                                 <tr>
                                     <td>Liability Insurance</td>
                                     <td></td>
-                                    <td>$33.00</td>
+                                    <td>$15.00</td>
                                     <td>${additionalCharges.liabilityInsurance.toFixed(2)}</td>
                                 </tr>
                                 <tr>
                                     <td>Rental Tax</td>
                                     <td></td>
-                                    <td>$33.00</td>
+                                    <td>$11.00</td>
                                     <td>${additionalCharges.rentalTax.toFixed(2)}</td>
                                 </tr>
                             </tbody>
@@ -181,9 +187,7 @@ const Reservation = () => {
                                 </tr>
                             </tfoot>
                         </table>
-                    </div>
-
-                    
+                    </div>    
                 </div>
                 <div className="row pb-5" style={{paddingLeft:"3rem", paddingTop:"18px", width:"81%"}}>
                     <div className="col-lg-4 mainReserv">
@@ -194,7 +198,7 @@ const Reservation = () => {
                                 data.length > 0 ? (
                                     data.map((item, i) => {
                                         return (
-                                            <option key={i} value="">{item.type}</option>
+                                            <option key={i} value={item.type}>{item.type}</option>
                                         );
                                     })
                                 ) : ("No Car Available")
@@ -202,9 +206,10 @@ const Reservation = () => {
                         </select>
                         <p>Vehicle <span style={{color:"red"}}>*</span></p>
                         <select 
+                            ref={selectRef}
                             style={{color:"#828290", fontSize:"14px", fontFamily:"Poppins sans-serif"}} 
                             className="form-control vType"
-                            onChange={(e)=> setRate(e.target.value)}
+                            onChange={(e)=> rateFunction(e.target.value,data)}
                             >
                             {
                                 data.length > 0 ? (
@@ -219,10 +224,9 @@ const Reservation = () => {
                     </div>
                     <div className="col-lg-4 aditionalCharge">
                         <h3>Additional Charges</h3>
-                        
-                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('collisionDamageWaiver', e.target.checked)} /> <label>Collision Damage Waiver <span>$33</span></label><br />
-                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('liabilityInsurance', e.target.checked)} /> <label>Liability Insurance <span>$33</span></label><br />
-                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('rentalTax', e.target.checked)} /> <label>Rental Tax <span>$33</span></label>
+                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('collisionDamageWaiver', e.target.checked)} /> <label>Collision Damage Waiver <span>$9</span></label><br />
+                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('liabilityInsurance', e.target.checked)} /> <label>Liability Insurance <span>$15</span></label><br />
+                        <input type="checkbox" onChange={(e) => handleAdditionalCharges('rentalTax', e.target.checked)} /> <label>Rental Tax <span>$11</span></label>
                     </div>
                 </div>
             </div>
@@ -231,4 +235,3 @@ const Reservation = () => {
 };
 
 export default Reservation;
-
