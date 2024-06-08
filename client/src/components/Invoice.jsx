@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import { getInvoiceRequest } from '../../apiRequiest/apiRequiest';
+import moment from 'moment';
 const Invoice = () => {
     const componentRef = useRef();
     const handlePrint = useReactToPrint({
@@ -9,16 +10,18 @@ const Invoice = () => {
 
     // get invoice api request
     const [invoice, setInvoice] = useState([]);
-    console.log(invoice)
     useEffect(()=>{
         (async()=>{
             let result = await getInvoiceRequest();
-            setInvoice(result[0])
+            setInvoice(result)
         })()
     },[0])
     return (
         <div>
-            <button onClick={handlePrint}>Print</button>
+            <div className="col-12 btn d-flex">
+                  <button onClick={handlePrint} style={{marginLeft:"18rem", marginTop:"10px"}}>Print / Download</button>
+                    </div>
+
             <div ref={componentRef} className="invoice-container">
                 <div className="container">
                     <div className="row pt-3 pb-3">
@@ -44,8 +47,8 @@ const Invoice = () => {
                                 <h4>RA #0121</h4>
                                 <span>REPAIR ORDER:</span>
                                 <p>CLAIM:</p>
-                                <p>Date/Time Out : {invoice.PickupDate}</p>
-                                <p>Date/Time In : {invoice.ReturnDate}</p>
+                                <p>Date/Time Out :  {moment(invoice.PickupDate).format('MMMM Do YYYY, h:mm:ss a')}</p>
+                                <p>Date/Time In : {moment(invoice.ReturnDate).format('MMMM Do YYYY, h:mm:ss a')}</p>
                             </div>
                           
                             <div className="working-hours">
