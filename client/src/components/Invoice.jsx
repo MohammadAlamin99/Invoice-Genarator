@@ -13,7 +13,7 @@ const Invoice = () => {
     useEffect(()=>{
         (async()=>{
             let result = await getInvoiceRequest();
-            setInvoice(result)
+            setInvoice(result);
         })()
     },[0])
     return (
