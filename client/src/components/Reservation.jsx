@@ -112,6 +112,7 @@ const Reservation = () => {
         const Vehicle = selectRef.current.value;
         const VehicleType = typeRef.current.value;
         let res = await createInvoiceRequest(firstName,lastName,email, phone, address,pickupDate,returnDate,duration,discount,VehicleType,Vehicle,collisionDamageWaiver,liabilityInsurance,rentalTax,charge,grandTotal);
+        window.location.href="/invoice"
     }
 
     return (
@@ -120,7 +121,7 @@ const Reservation = () => {
                 <div className="row reserv p-0">
                     <div className="col-12 btn d-flex" style={{justifyContent: "space-between", alignItems: "center"}}>
                     <h2>Reservation</h2>
-                  <a href="/invoice"><button onClick={onInvoiceHanlder}>Print / Download</button></a>
+                <button onClick={onInvoiceHanlder}>Print / Download</button>
                     </div>
 
                     <div className="col-lg-3 mainReserv">
